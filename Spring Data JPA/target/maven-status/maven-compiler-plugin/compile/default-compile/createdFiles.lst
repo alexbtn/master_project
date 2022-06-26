@@ -1,0 +1,9 @@
+com\paj\project\bettingapp\bet\model\Bet$BetBuilder.class
+com\paj\project\bettingapp\match\model\Match.class
+com\paj\project\bettingapp\match\model\Match$MatchBuilder.class
+com\paj\project\bettingapp\bet\model\Ticket.class
+com\paj\project\bettingapp\bet\model\TicketStatus.class
+com\paj\project\bettingapp\bet\model\Ticket$TicketBuilder.class
+com\paj\project\bettingapp\bet\repository\TicketRepository.class
+com\paj\project\bettingapp\match\repository\MatchRepository.class
+com\paj\project\bettingapp\bet\model\Bet.class
