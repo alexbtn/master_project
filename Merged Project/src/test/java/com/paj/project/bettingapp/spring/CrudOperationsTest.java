@@ -1,4 +1,4 @@
-package com.paj.project.bettingapp;
+package com.paj.project.bettingapp.spring;
 
 import com.paj.project.bettingapp.bet.model.Bet;
 import com.paj.project.bettingapp.bet.model.Ticket;
@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import static com.paj.project.bettingapp.util.TicketListCreator.buildTicketList;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {SpringDataConfiguration.class})
@@ -49,7 +49,7 @@ public class CrudOperationsTest {
         ticketRepository.findAll();
         time2 = System.nanoTime();
         long timeDiffR = (time2 - time1) / 1000_000;
-//
+
         time1 = System.nanoTime();
         ticketRepository.deleteAll(ticketList);
         time2 = System.nanoTime();
@@ -59,40 +59,5 @@ public class CrudOperationsTest {
         System.out.println("Read execution time: " + timeDiffR);
         System.out.println("Update execution time: " + timeDiffU);
         System.out.println("Delete execution time: " + timeDiffD);
-    }
-
-    private List<Ticket> buildTicketList() {
-        List<Ticket> ticketList = new ArrayList<>();
-        for (int i = 0; i < 50000; i++) {
-            Ticket ticket = createTicket();
-            ticketList.add(ticket);
-        }
-        return ticketList;
-    }
-
-    private Match createMatch() {
-        return Match.builder()
-                .drawOdd(2.33)
-                .matchDate(new Date())
-                .hostTeamWinOdd(2.33)
-                .name("Fiorentina - Inter")
-                .visitorTeamWinOdd(2.33)
-                .score("2 - 3")
-                .build();
-    }
-
-    private Bet createBet() {
-        return Bet.builder()
-                .match(createMatch())
-                .resultChoice("X")
-                .build();
-    }
-
-    private Ticket createTicket() {
-        return Ticket.builder()
-                .ticketStatus(TicketStatus.Pending)
-                .sum(20.0)
-                .bets(List.of(createBet()))
-                .build();
     }
 }

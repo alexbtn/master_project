@@ -1,3 +1,9 @@
+package com.paj.project.bettingapp.hibernate;
+
+import com.paj.project.bettingapp.bet.model.Bet;
+import com.paj.project.bettingapp.bet.model.Ticket;
+import com.paj.project.bettingapp.bet.model.TicketStatus;
+import com.paj.project.bettingapp.match.model.Match;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -7,10 +13,9 @@ import org.junit.jupiter.api.Test;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
+
+import static com.paj.project.bettingapp.util.TicketListCreator.buildTicketList;
 
 public class HibernateTest {
 
@@ -36,8 +41,7 @@ public class HibernateTest {
             }
             session.getTransaction().commit();
             long time2 = System.nanoTime();
-            long timeDiff = (time2 - time1) / 1000_000;
-            System.out.println("Insert execution time: " + timeDiff);
+            long timeDiffC = (time2 - time1) / 1000_000;
 
             for (Ticket ticket : tickets) {
                 ticket.setTicketStatus(TicketStatus.Won);
@@ -55,8 +59,7 @@ public class HibernateTest {
             }
             session.getTransaction().commit();
             time2 = System.nanoTime();
-            timeDiff = (time2 - time1) / 1000_000;
-            System.out.println("Update execution time: " + timeDiff);
+            long timeDiffU = (time2 - time1) / 1000_000;
 
             time1 = System.nanoTime();
             CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -64,8 +67,7 @@ public class HibernateTest {
             criteria.from(Ticket.class);
             session.createQuery(criteria).getResultList();
             time2 = System.nanoTime();
-            timeDiff = (time2 - time1) / 1000_000;
-            System.out.println("Retrieve execution time: " + timeDiff);
+            long timeDiffR = (time2 - time1) / 1000_000;
 
             time1 = System.nanoTime();
             session.beginTransaction();
@@ -74,43 +76,13 @@ public class HibernateTest {
             }
             session.getTransaction().commit();
             time2 = System.nanoTime();
-            timeDiff = (time2 - time1) / 1000_000;
-            System.out.println("Delete execution time: " + timeDiff);
+            long timeDiffD = (time2 - time1) / 1000_000;
+
+            System.out.println("Insert execution time: " + timeDiffC);
+            System.out.println("Retrieve execution time: " + timeDiffR);
+            System.out.println("Update execution time: " + timeDiffU);
+            System.out.println("Delete execution time: " + timeDiffD);
         }
     }
 
-    private List<Ticket> buildTicketList() {
-        List<Ticket> ticketList = new ArrayList<>();
-        for (int i = 0; i < 50000; i++) {
-            Ticket ticket = createTicket();
-            ticketList.add(ticket);
-        }
-        return ticketList;
-    }
-
-    private Match createMatch() {
-        return Match.builder()
-                .drawOdd(2.33)
-                .matchDate(new Date())
-                .hostTeamWinOdd(2.33)
-                .name("Fiorentina - Inter")
-                .visitorTeamWinOdd(2.33)
-                .score("2 - 3")
-                .build();
-    }
-
-    private Bet createBet() {
-        return Bet.builder()
-                .match(createMatch())
-                .resultChoice("X")
-                .build();
-    }
-
-    private Ticket createTicket() {
-        return Ticket.builder()
-                .ticketStatus(TicketStatus.Pending)
-                .sum(20.0)
-                .bets(new LinkedList<>(List.of(createBet())))
-                .build();
-    }
 }

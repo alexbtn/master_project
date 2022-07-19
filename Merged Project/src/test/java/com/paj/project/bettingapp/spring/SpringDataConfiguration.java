@@ -1,4 +1,4 @@
-package com.paj.project.bettingapp;
+package com.paj.project.bettingapp.spring;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;

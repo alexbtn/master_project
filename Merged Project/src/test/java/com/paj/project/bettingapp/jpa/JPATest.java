@@ -1,3 +1,9 @@
+package com.paj.project.bettingapp.jpa;
+
+import com.paj.project.bettingapp.bet.model.Bet;
+import com.paj.project.bettingapp.bet.model.Ticket;
+import com.paj.project.bettingapp.bet.model.TicketStatus;
+import com.paj.project.bettingapp.match.model.Match;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
@@ -7,10 +13,9 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
+
+import static com.paj.project.bettingapp.util.TicketListCreator.buildTicketList;
 
 public class JPATest {
 
@@ -30,8 +35,7 @@ public class JPATest {
             }
             em.getTransaction().commit();
             long time2 = System.nanoTime();
-            long timeDiff = (time2 - time1) / 1000_000;
-            System.out.println("Insert execution time: " + timeDiff);
+            long timeDiffC = (time2 - time1) / 1000_000;
 
             for (Ticket ticket : tickets) {
                 ticket.setTicketStatus(TicketStatus.Won);
@@ -49,8 +53,7 @@ public class JPATest {
             }
             em.getTransaction().commit();
             time2 = System.nanoTime();
-            timeDiff = (time2 - time1) / 1000_000;
-            System.out.println("Update execution time: " + timeDiff);
+            long timeDiffU = (time2 - time1) / 1000_000;
 
             time1 = System.nanoTime();
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -60,8 +63,7 @@ public class JPATest {
             TypedQuery<Ticket> allQuery = em.createQuery(all);
             allQuery.getResultList();
             time2 = System.nanoTime();
-            timeDiff = (time2 - time1) / 1000_000;
-            System.out.println("Retrieve execution time: " + timeDiff);
+            long timeDiffR = (time2 - time1) / 1000_000;
 
             time1 = System.nanoTime();
             em.getTransaction().begin();
@@ -70,49 +72,18 @@ public class JPATest {
             }
             em.getTransaction().commit();
             time2 = System.nanoTime();
-            timeDiff = (time2 - time1) / 1000_000;
-            System.out.println("Delete execution time: " + timeDiff);
+            long timeDiffD = (time2 - time1) / 1000_000;
+
+            System.out.println("Insert execution time: " + timeDiffC);
+            System.out.println("Retrieve execution time: " + timeDiffR);
+            System.out.println("Update execution time: " + timeDiffU);
+            System.out.println("Delete execution time: " + timeDiffD);
 
             em.close();
 
         } finally {
             emf.close();
         }
-    }
-
-    private List<Ticket> buildTicketList() {
-        List<Ticket> ticketList = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            Ticket ticket = createTicket();
-            ticketList.add(ticket);
-        }
-        return ticketList;
-    }
-
-    private Match createMatch() {
-        return Match.builder()
-                .drawOdd(2.33)
-                .matchDate(new Date())
-                .hostTeamWinOdd(2.33)
-                .name("Fiorentina - Inter")
-                .visitorTeamWinOdd(2.33)
-                .score("2 - 3")
-                .build();
-    }
-
-    private Bet createBet() {
-        return Bet.builder()
-                .match(createMatch())
-                .resultChoice("X")
-                .build();
-    }
-
-    private Ticket createTicket() {
-        return Ticket.builder()
-                .ticketStatus(TicketStatus.Pending)
-                .sum(20.0)
-                .bets(new LinkedList<>(List.of(createBet())))
-                .build();
     }
 
 }
