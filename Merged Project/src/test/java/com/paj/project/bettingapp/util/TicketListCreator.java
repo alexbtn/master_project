@@ -8,10 +8,7 @@ import com.paj.project.bettingapp.match.model.Match;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 public class TicketListCreator {
 
@@ -24,8 +21,20 @@ public class TicketListCreator {
         return ticketList;
     }
 
+    public static void updateTicketList(List<Ticket> ticketList) {
+        for (Ticket ticket : ticketList) {
+            ticket.setTicketStatus(TicketStatus.Won);
+            for (Bet bet : ticket.getBets()) {
+                bet.setResultChoice("2");
+                Match match = bet.getMatch();
+                match.setName("FCSB - Dinamo");
+            }
+        }
+
+    }
+
     private static int getIterations() {
-        try (InputStream input = new FileInputStream("src/test/resources/config.properties")) {
+        try (InputStream input = new FileInputStream("D:\\Proiect-PAJ\\master_project\\Merged Project\\src\\test\\resources\\config.properties")) {
             Properties prop = new Properties();
             prop.load(input);
             return Integer.parseInt(prop.getProperty("number-of-iterations"));
@@ -56,7 +65,7 @@ public class TicketListCreator {
         return Ticket.builder()
                 .ticketStatus(TicketStatus.Pending)
                 .sum(20.0)
-                .bets(List.of(createBet()))
+                .bets(new LinkedList<>(List.of(createBet())))
                 .build();
     }
 
